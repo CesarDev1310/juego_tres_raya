@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tres en Raya - Tic Tac Toe</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="game-container">
+    <header class="game-header">
+      <h1 class="game-title">Tres en Raya</h1>
+      <p class="game-subtitle">Elige tu modo y demuestra tu estrategia</p>
+    </header>
+
+    <!-- Selector de Modo de Juego -->
+    <section class="mode-selector" aria-label="Modo de juego">
+      <button class="mode-btn active" data-mode="pvp">
+        <span class="icon">👥</span>
+        <span>1 vs 1 Local</span>
+      </button>
+      <button class="mode-btn" data-mode="ai-easy">
+        <span class="icon">🤖</span>
+        <span>IA Fácil</span>
+      </button>
+      <button class="mode-btn" data-mode="ai-hard">
+        <span class="icon">⚡</span>
+        <span>IA Imbatible</span>
+      </button>
+    </section>
+
+    <!-- Marcador de Puntuación -->
+    <section class="scoreboard">
+      <div class="score-card player-x">
+        <span class="player-label" id="label-x">Jugador X</span>
+        <span class="score-value" id="score-x">0</span>
+      </div>
+      <div class="score-card ties">
+        <span class="player-label">Empates</span>
+        <span class="score-value" id="score-ties">0</span>
+      </div>
+      <div class="score-card player-o">
+        <span class="player-label" id="label-o">Jugador O</span>
+        <span class="score-value" id="score-o">0</span>
+      </div>
+    </section>
+
+    <!-- Indicador de Turno / Estado -->
+    <div class="status-banner" id="status-banner" aria-live="polite">
+      Turno de <span class="turn-indicator turn-x">X</span>
+    </div>
+
+    <!-- Tablero de Juego 3x3 -->
+    <main class="board" id="board" role="grid" aria-label="Tablero de Tres en Raya">
+      <button class="cell" data-index="0" role="gridcell" aria-label="Casilla 1"></button>
+      <button class="cell" data-index="1" role="gridcell" aria-label="Casilla 2"></button>
+      <button class="cell" data-index="2" role="gridcell" aria-label="Casilla 3"></button>
+      <button class="cell" data-index="3" role="gridcell" aria-label="Casilla 4"></button>
+      <button class="cell" data-index="4" role="gridcell" aria-label="Casilla 5"></button>
+      <button class="cell" data-index="5" role="gridcell" aria-label="Casilla 6"></button>
+      <button class="cell" data-index="6" role="gridcell" aria-label="Casilla 7"></button>
+      <button class="cell" data-index="7" role="gridcell" aria-label="Casilla 8"></button>
+      <button class="cell" data-index="8" role="gridcell" aria-label="Casilla 9"></button>
+    </main>
+
+    <!-- Botones de Control -->
+    <footer class="controls">
+      <button class="action-btn primary" id="btn-restart">
+        <span class="btn-icon">🔄</span> Nueva Partida
+      </button>
+      <button class="action-btn secondary" id="btn-reset-scores">
+        <span class="btn-icon">🗑️</span> Reiniciar Marcador
+      </button>
+      <button class="action-btn utility" id="btn-toggle-sound" aria-label="Activar o desactivar sonido">
+        <span id="sound-icon">🔊</span>
+      </button>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
