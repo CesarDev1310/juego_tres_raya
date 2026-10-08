@@ -3,18 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tres en Raya - Tic Tac Toe</title>
+  <title>Tres en Raya - Tic Tac Toe con Supabase</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="game-container">
+    <!-- Barra Superior: Estado Supabase y Enlaces -->
+    <div class="top-bar">
+      <button class="db-status-badge" id="btn-open-db-config" title="Configurar conexión con Supabase">
+        <span class="status-dot" id="db-status-dot"></span>
+        <span id="db-status-text">Modo Local</span>
+        <span class="gear-icon">⚙️</span>
+      </button>
+
+      <div class="top-nav-buttons">
+        <button class="nav-mini-btn" id="btn-open-leaderboard" title="Ver Clasificación Global">
+          🏆 Ranking
+        </button>
+        <button class="nav-mini-btn" id="btn-open-history" title="Ver Historial de Partidas">
+          📜 Historial
+        </button>
+      </div>
+    </div>
+
     <header class="game-header">
       <h1 class="game-title">Tres en Raya</h1>
-      <p class="game-subtitle">Elige tu modo y demuestra tu estrategia</p>
+      <p class="game-subtitle">Elige tu modo y sincroniza con Supabase</p>
     </header>
+
+    <!-- Caja de Apodo de Jugador -->
+    <section class="player-profile-section">
+      <div class="profile-input-group">
+        <label for="player-nickname" class="profile-label">👤 Tu Apodo:</label>
+        <input 
+          type="text" 
+          id="player-nickname" 
+          class="nickname-input" 
+          placeholder="Ej: JugadorPro" 
+          maxlength="15" 
+          spellcheck="false" 
+          autocomplete="off"
+        >
+      </div>
+    </section>
 
     <!-- Selector de Modo de Juego -->
     <section class="mode-selector" aria-label="Modo de juego">
@@ -32,7 +66,7 @@
       </button>
     </section>
 
-    <!-- Marcador de Puntuación -->
+    <!-- Marcador de Puntuación de la Sesión -->
     <section class="scoreboard">
       <div class="score-card player-x">
         <span class="player-label" id="label-x">Jugador X</span>
@@ -72,7 +106,7 @@
         <span class="btn-icon">🔄</span> Nueva Partida
       </button>
       <button class="action-btn secondary" id="btn-reset-scores">
-        <span class="btn-icon">🗑️</span> Reiniciar Marcador
+        <span class="btn-icon">🗑️</span> Reiniciar
       </button>
       <button class="action-btn utility" id="btn-toggle-sound" aria-label="Activar o desactivar sonido">
         <span id="sound-icon">🔊</span>
@@ -80,6 +114,91 @@
     </footer>
   </div>
 
+  <!-- ==================== MODALES ==================== -->
+
+  <!-- Modal 1: Configuración de Supabase -->
+  <div class="modal-overlay" id="modal-db" role="dialog" aria-modal="true" aria-labelledby="modal-db-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-db-title" class="modal-title">⚡ Conexión con Supabase</h2>
+        <button class="modal-close-btn" data-close="modal-db" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          Conecta tu base de datos de Supabase para guardar el historial de partidas y participar en el Ranking global.
+        </p>
+        <div class="form-group">
+          <label for="input-supabase-url">Project URL:</label>
+          <input 
+            type="text" 
+            id="input-supabase-url" 
+            placeholder="https://xyzcompany.supabase.co" 
+            autocomplete="off" 
+            spellcheck="false"
+          >
+        </div>
+        <div class="form-group">
+          <label for="input-supabase-key">Anon / Public Key:</label>
+          <input 
+            type="password" 
+            id="input-supabase-key" 
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." 
+            autocomplete="off" 
+            spellcheck="false"
+          >
+        </div>
+        <div id="db-feedback-msg" class="feedback-msg"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn secondary" id="btn-clear-db-config">Desconectar</button>
+        <button class="action-btn primary" id="btn-save-db-config">Guardar y Probar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Clasificación (Leaderboard) -->
+  <div class="modal-overlay" id="modal-leaderboard" role="dialog" aria-modal="true" aria-labelledby="modal-leaderboard-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-leaderboard-title" class="modal-title">🏆 Clasificación Global</h2>
+        <button class="modal-close-btn" data-close="modal-leaderboard" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="leaderboard-content" class="table-container">
+          <div class="loading-state">Cargando clasificación...</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn secondary" id="btn-refresh-leaderboard">🔄 Actualizar</button>
+        <button class="action-btn primary" data-close="modal-leaderboard">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Historial de Partidas -->
+  <div class="modal-overlay" id="modal-history" role="dialog" aria-modal="true" aria-labelledby="modal-history-title">
+    <div class="modal-card wide">
+      <div class="modal-header">
+        <h2 id="modal-history-title" class="modal-title">📜 Historial de Partidas</h2>
+        <button class="modal-close-btn" data-close="modal-history" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="history-content" class="table-container">
+          <div class="loading-state">Cargando partidas...</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn secondary" id="btn-refresh-history">🔄 Actualizar</button>
+        <button class="action-btn primary" data-close="modal-history">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK Oficial de Supabase Client desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Configuración externa opcional -->
+  <script src="config.js" onerror="/* config.js opcional */"></script>
+  <!-- Lógica Principal -->
   <script src="script.js"></script>
 </body>
 </html>
